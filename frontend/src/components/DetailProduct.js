@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const DetailProduct = () => {
-  const [detailProduct, setProduct] = useState();
+  const [detailProduct, setDetailProduct] = useState();
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`http://127.0.0.1:5005/product/${id}`);
-      const result = await response.json();
-      setIsLoading(false);
-      setProduct(result);
+      try {
+        setError(null);
+        const response = await fetch(`http://127.0.0.1:5005/product/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setDetailProduct(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchData();
   }, []);
-
+  if (isLoading) return <div>loading...</div>;
+  if (error) return <div>Error: {error}</div>;
   return (
     <>
       {isLoading ? (
