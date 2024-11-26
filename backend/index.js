@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
-const fs = require("fs");
+
 const bodyParser = require("body-parser");
 const db = require("./db/mysql.js");
 
@@ -21,6 +21,13 @@ app.get("/", function (req, res) {
   conn.query(sql, function (err, result) {
     if (err) console.log("query is not excuted: " + err);
     else res.send(result);
+  });
+});
+app.get("/product/:id", function (req, res) {
+  const sql = `select * from products where product_id = ${req.params.id}`;
+  conn.query(sql, function (err, result) {
+    if (err) console.log("query is not excuted: " + err);
+    else res.send(result[0]);
   });
 });
 
